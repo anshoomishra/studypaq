@@ -9,9 +9,9 @@ import dotenv
 from fastapi.responses import HTMLResponse
 import os
 from functools import lru_cache
-import settings
+import app.settings as settings
 from typing import List,Optional
-from db import crud
+from app.db import crud
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -34,8 +34,8 @@ logger.info("Started")
 BASEDIR  = pathlib.Path(__file__).parent
 templates = Jinja2Templates(directory= str(BASEDIR / "templates"))
 
-from db import  models, schema
-from db.sessions import SessionLocal, engine
+from app.db import  models, schema
+from app.db.sessions import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -69,7 +69,7 @@ def auto_complate_countries(term:Optional[str],db:Session = Depends(get_db)):
     
     return suggestions
 result = []
-file = "db/db.txt"
+file = "db.txt"
 _file = pathlib.Path(__file__).parent.resolve()
 
 file_path = _file / file
@@ -79,14 +79,12 @@ with open(str(file_path),encoding="utf-8") as file:
         result.append(" ".join(item.split()))
 
 def create_bulk_country(cr: schema.CountryRecord, db: Session = Depends(get_db)):
-    print(cr)
+  
     db_country = None
     try:
         db_country = crud.get_country(db, id=cr.id)
     except:
         pass
-
-    print(db_country)
     if db_country:
         raise HTTPException(status_code=400, detail="already registered")
     return crud.create_country( item=cr,db=db)
