@@ -4,10 +4,9 @@ from pyexpat import model
 from re import ASCII
 from statistics import mode
 from tempfile import template
+from turtle import dot
 from fastapi import FastAPI,Depends,HTTPException,Request
-import dotenv
 from fastapi.responses import HTMLResponse
-import os
 from functools import lru_cache
 import app.settings as settings
 from typing import List,Optional
@@ -16,20 +15,16 @@ from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
+import dotenv
 logger = logging.getLogger(__name__)
 
 import pathlib
 
 logging.basicConfig(filename='file.log',level=logging.DEBUG,format="%(asctime)s:%(name)s:%(message)s")
 
-logger.debug("Debug")
-
 app = FastAPI()
-# print(settings.development.DEBUG)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-settings = settings.get_settings
 
-logger.info("Started")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 BASEDIR  = pathlib.Path(__file__).parent
 templates = Jinja2Templates(directory= str(BASEDIR / "templates"))
@@ -107,11 +102,29 @@ def delete_country(term:Optional[str],db:Session = Depends(get_db)):
         return {f"{id}":"Does Not exist"}
     return deleted_record
 
-def create_data(db):
-    id = 20
-    for item in result:
-        cr = schema.CountryRecord(id=id,country=item)
-        create_bulk_country(cr,db)
-        id+=1
+def create_data():
+    id = 1
+    with Session(engine) as session:
 
+        for item in result:
+            cr = schema.CountryRecord(id=id,country=item)
+            item = models.Record(**cr.dict())
+            # crud.create_country(db=session,item=cr)
+            session.add(item)
+            session.commit()
+            session.refresh(item)
+            id+=1
 
+def delete_bulk_data():
+    with Session(engine) as session:
+        id = 1
+        db_item = crud.get_country(id=id,db=session)
+        while db_item:
+            db_item = crud.get_country(id=id,db=session)
+            session.delete(db_item)
+            session.commit()
+            id+=1
+        # return db_hero
+
+# delete_bulk_data()
+create_data()

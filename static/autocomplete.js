@@ -1,9 +1,13 @@
 $( function() {
           
     $("#autocomplete" ).autocomplete({
-      source: "/search/"
+      source: "/search/",
+      
     });
-  } );
+    
+  } 
+   
+  );
 
   // function searchFunction(){
   //   console.log("Hii")

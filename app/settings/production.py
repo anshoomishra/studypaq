@@ -1,11 +1,14 @@
 import os
 import dotenv
-from .base_settings import *
+from base_settings import get_settings
 
 DEBUG = False
-dotenv.load_dotenv(".env")
 
-DATABASE_URL = os.getenv("SQLALCHEMY_POSTGRES_DATABASE_URL")
+settings = get_settings()
 
-print(DATABASE_URL)
+# dotenv.load_dotenv(".env")
+
+# DATABASE_URL = os.getenv("SQLALCHEMY_POSTGRES_DATABASE_URL")
+
+print(dir(settings.SQLALCHEMY_DATABASE_URL))
 
