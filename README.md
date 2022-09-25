@@ -1,6 +1,7 @@
 # studypaq
 Client File mail.py
-# Study PAQ SEARCH API INSTALLATION
+## Study PAQ SEARCH API Implementation
+
 ## Assumptions 
 - High Performance
 - Highly scalable
