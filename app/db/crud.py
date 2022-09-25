@@ -11,7 +11,6 @@ formatter = "%(asctime)s:%(name)s:%(message)s"
 logging.basicConfig(filename="crud.log", format=formatter)
 
 def get_country(db: Session, id: int):
-    print(db.query(models.Record).filter(models.Record.id == id))
     return db.query(models.Record).filter(models.Record.id == id).first()
 
 def get_country_to_be_deleted(db: Session, term: Optional[str]):
@@ -20,6 +19,8 @@ def get_country_to_be_deleted(db: Session, term: Optional[str]):
 def get_countries(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Record).offset(skip).limit(limit).all()
 
+def get_last_row_in_country(db:Session):
+    return db.query(models.Record).all().reverse()[0]
 
 def create_country(db: Session, item: schema.CountryRecord):
     db_item = models.Record(**item.dict())

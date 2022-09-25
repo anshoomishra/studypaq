@@ -75,34 +75,27 @@ def auto_complate_countries(term:Optional[str],db:Session = Depends(get_db)):
     logging.info(suggestions)
     print(suggestions)
     return suggestions
-result = []
-file = "db.txt"
-_file = pathlib.Path(__file__).parent.resolve()
 
-file_path = _file / file
 
-with open(str(file_path),encoding="utf-8") as file:
-    for item in file:
-        result.append(" ".join(item.split()))
-logging.info("Result from main",result)
-def create_bulk_country(cr: schema.CountryRecord, db: Session = Depends(get_db)):
-  
-    db_country = None
-    try:
-        db_country = crud.get_country(db, id=cr.id)
-    except:
-        pass
-    if db_country:
-        raise HTTPException(status_code=400, detail="already registered")
-    return crud.create_country( item=cr,db=db)
+def load_txt_file():
+    text_db = []
+    file = "db.txt"
+    _file = pathlib.Path(__file__).parent.resolve()
 
-@app.post("/countries/", response_model=schema.CountryRecord)
+    file_path = _file / file
+
+    with open(str(file_path),encoding="utf-8") as file:
+        for item in file:
+            text_db.append(" ".join(item.split()))
+    return text_db
+
+txt_db = load_txt_file()
+
+@app.post("/country/create", response_model=schema.CountryRecord)
 def create_country(cr: schema.CountryRecord, db: Session = Depends(get_db)):
     db_country = crud.get_country(db, id=cr.id)
-    print(db_country)
     if db_country:
         raise HTTPException(status_code=400, detail="already registered")
-    create_data(db)
     return crud.create_country(db=db, item=cr)
 
 @app.delete("/country/delete/{id}")
@@ -118,7 +111,7 @@ def create_data():
     id = 1
     with Session(engine) as session:
 
-        for item in result:
+        for item in load_txt_file:
             cr = schema.CountryRecord(id=id,country=item)
             item = models.Record(**cr.dict())
             # crud.create_country(db=session,item=cr)
@@ -149,6 +142,7 @@ def delete_bulk_data():
 def delete_all_countries():
     delete_bulk_data()
     return {"ok":True}
+
 @app.post("/create_all_countries/")
 def create_all_countries():
     create_data()
