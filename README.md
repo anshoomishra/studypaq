@@ -10,7 +10,7 @@ Client File mail.py
 - No data validation required
 - Autoscale system
 - Nosql support (database scaling) 
-- All most Production ready
+- All most Production ready(set to env vars)
 - Tested Locally 
 - No security implemented 
 ## Trade Offs to design APIs
@@ -19,14 +19,14 @@ Client File mail.py
 - Choosing FastAPI Over Flask, DRF, Django
 - High performance
 - Inbuilt API docs
-- Async support and highly performable
-- Easily scalable since it support no sql 
-- Small microservice that is almost production ready 
+- Async support
+- Horizontal scalable db since it supports no sql 
+- Microservice that is almost production ready 
 
 ## I have configured this project 
 
 - Development Environment
-- Production Environment (Not Deployed to any live environment -- not provided any space)
+- Production Environment (Not Deployed to any live environment -- not having any space)
 
 ### Features
 
@@ -38,7 +38,7 @@ Client File mail.py
 - Insert induvidual country
 - supports best search
 - delete individual data provided id of item
-- Having Good docs
+- Having Good inbuit docs
 - Implemented Using fast api considering performance first
 
 ### For Production Environment
@@ -66,14 +66,46 @@ Client File mail.py
 ### 1. Loading and Deleting Bulk Data
 
 - call localhost:8000/create_all_countries/ 
+
+![image](screenshots/create_all_country.png)
+
 - call localhost:8000/delete_all_countries/
+
+#### Note Make sure to create_all_countries from txt file, which contains only city names in strings and run this command on top of "/create_country/" since "create_all_countries" call creates db having id from 1 to last entry in text db. Not implemented this edge case. will improve in next version. Alternative workaround just call "/delete_all_countries/" then call "/create_all_countries/"
+
+
 
 ### 2. Creating a country 
 
 - call localhost:8000/create_country/ with post 
-- {"countryName":"Some Name"}
+- {"id":someid:int, "countryName":"Some Name"}
 
 ### 3. Deleting a country 
 
-- call localhost:8000/country/delete/{id}
-- 
+- call localhost:8000/country/delete/id
+
+### 3. Getting a country 
+
+- call localhost:8000/term/?term=1
+
+![country](screenshots/get_one_term.png)
+
+### 3. Getting all countries 
+
+- call localhost:8000/countries
+
+![all_countries](/screenshots/all_countries.png)
+
+### Access Local Inbuilt API docs Open API standard
+
+- localhost:8000/docs
+
+![image](screenshots/fast_api_swaggers_docs.png)
+
+- localhost:8000/redocs
+
+### Accessing Front End 
+
+- localhost:8000
+- search in search field 
+

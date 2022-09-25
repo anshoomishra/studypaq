@@ -54,10 +54,10 @@ def read_country(skip: int = 0, limit: int = 2000, db: Session = Depends(get_db)
     countries =  crud.get_countries(db, skip=skip, limit=limit)
     return countries
 
-@app.get("/country/id", response_model=schema.CountryRecord)
-def read_country(id:int, db: Session = Depends(get_db)):
+@app.get("/query/term", response_model=schema.CountryRecord)
+def read_country(term:int,db: Session = Depends(get_db)):
     
-    return crud.get_country(db, id=id)
+    return crud.get_country(db, id=term)
     
 
 @app.get("/search/")
@@ -111,14 +111,17 @@ def create_data():
     id = 1
     with Session(engine) as session:
 
-        for item in load_txt_file:
+        for item in txt_db:
             cr = schema.CountryRecord(id=id,country=item)
             item = models.Record(**cr.dict())
             # crud.create_country(db=session,item=cr)
+            if crud.get_country(id = item.id,db = session):
+                return {"Alert":"Item alredy there! Please run delte_all "}
             session.add(item)
             session.commit()
             session.refresh(item)
             id+=1
+    return {"Ok":True}
 
 def delete_bulk_data():
     with Session(engine) as session:
@@ -145,5 +148,5 @@ def delete_all_countries():
 
 @app.post("/create_all_countries/")
 def create_all_countries():
-    create_data()
-    return {"ok":True}
+    
+    return create_data()
