@@ -11,6 +11,7 @@ formatter = "%(asctime)s:%(name)s:%(message)s"
 logging.basicConfig(filename="crud.log", format=formatter)
 
 def get_country(db: Session, id: int):
+    print(db.query(models.Record).filter(models.Record.id == id))
     return db.query(models.Record).filter(models.Record.id == id).first()
 
 def get_country_to_be_deleted(db: Session, term: Optional[str]):
@@ -29,8 +30,8 @@ def create_country(db: Session, item: schema.CountryRecord):
     db.refresh(db_item)
     return db_item
 
-def delete_country(db: Session, term: Optional[str]):
-    db_item = get_country_to_be_deleted(db,term)
+def delete_country(db: Session, id: int):
+    db_item = get_country(db,id)
     logger.info(f"Delete Country from crud.py {db_item}")
     if not db_item:
         raise ValueError("No Such Entity")

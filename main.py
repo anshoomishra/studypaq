@@ -14,7 +14,7 @@ from app.db import crud
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
+from app.query import query as q
 import dotenv
 logger = logging.getLogger(__name__)
 
@@ -54,14 +54,26 @@ def read_country(skip: int = 0, limit: int = 2000, db: Session = Depends(get_db)
     countries =  crud.get_countries(db, skip=skip, limit=limit)
     return countries
 
+@app.get("/country/id", response_model=schema.CountryRecord)
+def read_country(id:int, db: Session = Depends(get_db)):
+    
+    return crud.get_country(db, id=id)
+    
 
 @app.get("/search/")
 def auto_complate_countries(term:Optional[str],db:Session = Depends(get_db)):
-    countries = db.query(models.Record).filter(models.Record.country.contains(term)).all()
+    best_search_terms = term.strip().split(" ")
+    print(best_search_terms)
+    query = q.query_set(db=db)
+    for item in best_search_terms:
+        query = query.filter(models.Record.country.contains(term)) 
+    countries = query.all()
     suggestions = []
+
     for item in countries:
         suggestions.append(item.country)
     logging.info(suggestions)
+    print(suggestions)
     return suggestions
 result = []
 file = "db.txt"
@@ -93,11 +105,11 @@ def create_country(cr: schema.CountryRecord, db: Session = Depends(get_db)):
     create_data(db)
     return crud.create_country(db=db, item=cr)
 
-@app.delete("/country/delete/{term}")
-def delete_country(term:Optional[str],db:Session = Depends(get_db)):
+@app.delete("/country/delete/{id}")
+def delete_country(id:int,db:Session = Depends(get_db)):
     deleted_record = None
     try:
-        deleted_record =  crud.delete_country(term=term,db=db)
+        deleted_record =  crud.delete_country(id=id,db=db)
     except :
         return {f"{id}":"Does Not exist"}
     return deleted_record
@@ -120,19 +132,24 @@ def delete_bulk_data():
         id = 1
         db_item = crud.get_country(id=id,db=session)
         while db_item:
+            
             db_item = crud.get_country(id=id,db=session)
+            
+            if not db_item:
+                return 
             session.delete(db_item)
             session.commit()
             id+=1
         # return db_hero
 
-# delete_bulk_data()
-# create_data()
+
+# This is for bulk load and bulk delete database 
+ 
 @app.delete("/delete_all_countries/")
 def delete_all_countries():
     delete_bulk_data()
     return {"ok":True}
-@app.post("/crete_all_countries/")
+@app.post("/create_all_countries/")
 def create_all_countries():
     create_data()
     return {"ok":True}

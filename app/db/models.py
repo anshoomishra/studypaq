@@ -1,3 +1,4 @@
+from dataclasses import Field
 from enum import auto
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.types import Date
@@ -10,4 +11,7 @@ class Record(Base):
     id = Column(Integer, primary_key=True, index=True)
     
     country = Column(String(255))
+
+    def __str__(self) -> str:
+        return self.country
     
