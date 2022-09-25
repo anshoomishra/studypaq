@@ -77,12 +77,16 @@ Client File mail.py
 
 ### 2. Creating a country 
 
-- call localhost:8000/create_country/ with post 
+- call localhost:8000/add/country/ with post 
 - {"id":someid:int, "countryName":"Some Name"}
+
+![Add Country](screenshots/add_country.png)
 
 ### 3. Deleting a country 
 
-- call localhost:8000/country/delete/id
+- call localhost:8000//delete/country/id
+
+![delete country](screenshots/delete_country.png)
 
 ### 3. Getting a country 
 

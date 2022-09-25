@@ -91,14 +91,14 @@ def load_txt_file():
 
 txt_db = load_txt_file()
 
-@app.post("/country/create", response_model=schema.CountryRecord)
+@app.post("/add/country", response_model=schema.CountryRecord)
 def create_country(cr: schema.CountryRecord, db: Session = Depends(get_db)):
     db_country = crud.get_country(db, id=cr.id)
     if db_country:
         raise HTTPException(status_code=400, detail="already registered")
     return crud.create_country(db=db, item=cr)
 
-@app.delete("/country/delete/{id}")
+@app.delete("/delete/country/{id}")
 def delete_country(id:int,db:Session = Depends(get_db)):
     deleted_record = None
     try:
