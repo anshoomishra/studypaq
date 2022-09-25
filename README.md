@@ -19,3 +19,9 @@ Client File mail.py
 - Boom Enjoy this application
 
 ### For Production Environment
+## On any cloud service
+
+- create any vitual machine/ serverless host
+- generate virtual environment
+- install all dependecies in virtual environment using command "pip install requirement.txt"
+- just run your api 
