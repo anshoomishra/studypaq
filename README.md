@@ -113,3 +113,5 @@ Client File mail.py
 - localhost:8000
 - search in search field 
 
+![search result](screenshots/search_result.png)
+
